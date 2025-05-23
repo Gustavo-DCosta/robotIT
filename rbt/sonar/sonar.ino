@@ -5,7 +5,7 @@ Servo myServo;
 Ultrasonic ultrasonic(4);
 
 void setup() {
-  myServo.attach(8);
+  myServo.attach(8); // comment
   Serial.begin(9600);
   Serial.println("✨ Hello World ✨");
 }

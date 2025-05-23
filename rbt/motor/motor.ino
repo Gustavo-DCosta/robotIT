@@ -4,7 +4,7 @@ const int sens1 = 6;
 const int sens2 = 7;
 
 
-void setup() {
+void setup() { // comment
   // put your setup code here, to run once:
   Serial.begin(9600);
 
