@@ -17,7 +17,7 @@ const int phareD = 3;
 long RangeInCentimeters1;
 long RangeInCentimeters2;
 
-Ultrasonic ultrasonic(4);
+Ultrasonic ultrasonic(4); //commenyt
 
 void piloter() {
 
