@@ -1,111 +1,104 @@
 #include "Ultrasonic.h"
 #include <Servo.h>
 
-Servo myServo;
+Servo sonar_m1;
+Servo camera_m1;
+Servo camera_m2;
 
+#define ledobj 2
+#define leds 3
+#define m1 5
+#define m2 6
+#define sens1 7
+#define sens2 8
+#define joystick A0
+
+
+Ultrasonic sonar(4); //Define 
+
+int change = 0;  // Variable de changement de distance
 int angle = 0;
-float per;
-const int m1 = 5;
-const int m2 = 6;
-const int sens1 = 7;
-const int sens2 = 8;
-
-const int phareG = 2;
-const int phareD = 3;
-//const int objLed = 3;
-
 long RangeInCentimeters1;
 long RangeInCentimeters2;
 
-Ultrasonic ultrasonic(4); //commenyt
+void pilotage() {
 
-void piloter() {
-
-}
-
-void Capture() {
-  if (RangeInCentimeters1 == 0) {
-    Serial.begin("DIVISION PAR 0");
-    return;
-  }
-  per = ((float)(RangeInCentimeters2 - RangeInCentimeters1)/RangeInCentimeters1) *100;
-
-  Serial.print("👓 changement de: ");
-  Serial.println(per);
-
-  if (per < 0) {
-    Serial.println("HFJZJFGGZF ZUGIB G?NAHGAUIBJFGZG AUGGAGB A2BGY");
-  }
+  analogWrite(m1, 255);  // droite
+  analogWrite(m2, 0); //gauche 
+  digitalWrite(sens1, HIGH); // droite
+  digitalWrite(sens2, LOW); //gauche
 
 }
 
-void MesureDistance() {
-  Serial.println("Boucle 1");
-  // 1️ Balayage de 0 à 90°
-  for (angle = 20; angle <= 160; angle += 20) {
-    myServo.write(angle);
+void Sonar() {
+  Serial.println("Boucle 1:");
+  for (angle = 20; angle <= 180; angle += 20) {
+    sonar_m1.write(angle);
     Serial.print("📍 Angle servo: ");
     Serial.println(angle);
 
-    // Optionnel : mesure de distance
-    delay(100);
-    RangeInCentimeters1 = ultrasonic.MeasureInCentimeters();
+    RangeInCentimeters1 = sonar.MeasureInCentimeters();
     Serial.print("📏 Distance: ");
     Serial.print(RangeInCentimeters1);
     Serial.println(" cm");
 
-    delay(150);
-    RangeInCentimeters2 = ultrasonic.MeasureInCentimeters();
-    Capture();
+    delay(350);
+    RangeInCentimeters2 = sonar.MeasureInCentimeters();
   }
 
-  Serial.println("Boucle 2");
-  // 2️ Balayage de 90 à 180°  continuation logique
-  for (angle = 160; angle >= 20; angle -= 20) {
-    myServo.write(angle);
+  change = (float(RangeInCentimeters2-RangeInCentimeters1)/RangeInCentimeters2);
+  if (change < 0) {
+    digitalWrite(ledobj, HIGH);
+  }
+
+  for (angle = 180; angle >= 20; angle -= 20) {
+    sonar_m1.write(angle);
     Serial.print("📍 Angle servo: ");
     Serial.println(angle);
 
-    // Optionnel : mesure de distance
-    delay(100);
-    RangeInCentimeters1 = ultrasonic.MeasureInCentimeters();
+    RangeInCentimeters1 = sonar.MeasureInCentimeters();
     Serial.print("📏 Distance: ");
     Serial.print(RangeInCentimeters1);
     Serial.println(" cm");
     
-    delay(150);
-    RangeInCentimeters2 = ultrasonic.MeasureInCentimeters();
-    Capture();
+    delay(350);
+    RangeInCentimeters2 = sonar.MeasureInCentimeters();
+  }
 
+  change = (float(RangeInCentimeters2-RangeInCentimeters1)/RangeInCentimeters2);
+  if (change < 0) {
+    digitalWrite(ledobj, HIGH);
   }
 }
 
 void setup() {
+  sonar_m1.attach(A3);
+  camera_m1.attach(A2);
+  camera_m2.attach(2);
 
-  myServo.attach(A3);
   Serial.begin(9600);
-  Serial.println("✨ Hello World ✨");
 
-  pinMode(phareG, OUTPUT);
-  pinMode(phareD, OUTPUT);
+  /*
+  * pinMode(leds, OUTPUT);
+  */
 
   pinMode(m1, OUTPUT);
   pinMode(m2, OUTPUT);
   pinMode(sens1, OUTPUT);
   pinMode(sens2, OUTPUT);
-//  pinMode(objLed, OUTPUT);
+  pinMode(ledobj, OUTPUT);
+  pinMode(joystick, INPUT);
 
 }
 
 void loop() {
-  digitalWrite(phareG, HIGH);
-  digitalWrite(phareD, HIGH);
 
-  analogWrite(m1, 255);
-  analogWrite(m2, 255);
-  digitalWrite(sens1, HIGH);
-  digitalWrite(sens2, HIGH);
+  /* 
+  *   digitalWrite(leds, HIGH);
+  */
 
-  MesureDistance();
-  
+  pilotage();
+  Sonar(); 
+  delay(200);
 }
+
