@@ -5,7 +5,7 @@ Servo sonar_m1;
 Servo camera_m1;
 Servo camera_m2;
 
-#define ledobj 2
+#define ledobj 2 //
 #define leds 3
 #define m1 5
 #define m2 6
