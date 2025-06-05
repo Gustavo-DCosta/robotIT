@@ -5,7 +5,7 @@ Servo sonar_m1;
 Servo camera_m1;
 Servo camera_m2;
 
-#define ledobj 2
+#define ledobj 2 //
 #define leds 3
 #define m1 5
 #define m2 6
@@ -24,9 +24,9 @@ long RangeInCentimeters2;
 void pilotage() {
 
   analogWrite(m1, 255);  // droite
-  analogWrite(m2, 0); //gauche 
+  analogWrite(m2, 255); //gauche 
   digitalWrite(sens1, HIGH); // droite
-  digitalWrite(sens2, LOW); //gauche
+  digitalWrite(sens2, HIGH); //gauche
 
 }
 
@@ -47,8 +47,13 @@ void Sonar() {
   }
 
   change = (float(RangeInCentimeters2-RangeInCentimeters1)/RangeInCentimeters2);
-  if (change < 0) {
+  if (change < 3.5000000000000) {
     digitalWrite(ledobj, HIGH);
+
+    analogWrite(m1, 0);  // droite
+    analogWrite(m2, 0); //gauche 
+    digitalWrite(sens1, HIGH); // droite
+    digitalWrite(sens2, HIGH); //gauche
   }
 
   for (angle = 180; angle >= 20; angle -= 20) {
@@ -66,8 +71,40 @@ void Sonar() {
   }
 
   change = (float(RangeInCentimeters2-RangeInCentimeters1)/RangeInCentimeters2);
-  if (change < 0) {
+  if (change < 3.5000000000000) {
     digitalWrite(ledobj, HIGH);
+
+    analogWrite(m1, 0);  // droite
+    analogWrite(m2, 0); //gauche 
+    digitalWrite(sens1, HIGH); // droite
+    digitalWrite(sens2, HIGH); //gauche
+  }
+}
+
+void pilotageAlarm() {
+  if (angle <= 160 || change == -2) {
+    for (int x =0; x < 5; x++) {
+      analogWrite(m1, 250);  // droite
+      analogWrite(m2, 0); //gauche 
+      digitalWrite(sens1, HIGH); // droite
+      digitalWrite(sens2, HIGH); //gauche
+    }
+  }
+
+  if (angle <= 40 || change == -2) {
+    for (int x =0; x < 5; x++) {
+      analogWrite(m1, 250);  // droite
+      analogWrite(m2, 0); //gauche 
+      digitalWrite(sens1, HIGH); // droite
+      digitalWrite(sens2, HIGH); //gauche
+    }
+  }
+
+  if (angle >= 40 && angle >= 120 || change == -2) {
+    analogWrite(m1, 0);  // droite
+    analogWrite(m2, 0); //gauche 
+    digitalWrite(sens1, HIGH); // droite
+    digitalWrite(sens2, HIGH); //gauche
   }
 }
 
@@ -92,7 +129,7 @@ void setup() {
 }
 
 void loop() {
-
+  digitalWrite(ledobj, HIGH);
   /* 
   *   digitalWrite(leds, HIGH);
   */
